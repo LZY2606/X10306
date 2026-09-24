@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'org.example.smtwitness'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'io.javalin:javalin:6.6.0'
+    implementation 'org.xerial:sqlite-jdbc:3.46.1.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+application {
+    mainClass = 'smtwitness.Main'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    systemProperty 'java.io.tmpdir', System.getProperty('java.io.tmpdir')
+}
