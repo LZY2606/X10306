@@ -1,0 +1,95 @@
+(set-logic QF_LIA)
+< success
+(set-option :produce-models true)
+< success
+(set-info :source "求解器证言室：SMT 模型、unsat core 与假设作用域核验 / 基线 v1")
+< success
+; --- 领域量携带单位与坐标基准；导入层只保留原始表示 ---
+%unit x m
+%unit y m
+%unit t s
+%coords origin lattice-Z2
+(declare-const x Int)
+< success
+(declare-const y Int)
+< success
+(declare-const arr (Array Int Int))
+< success
+(declare-const s String)
+< success
+; --- 深度 0：边界命名断言（来源在基线中固定）---
+(assert (! (>= x -3) :named a_x_floor))
+< success
+(assert (! (<= x 3) :named a_x_ceil))
+< success
+(assert (! (>= y -3) :named a_y_floor))
+< success
+(assert (! (<= y 3) :named a_y_ceil))
+< success
+; 检查 1：完整模型，sat 可直接复核
+(check-sat)
+$ sat
+(get-model)
+@ (
+  (define-fun x () Int 1)
+  (define-fun y () Int 2)
+)
+; --- 数组：显式默认值 0，未覆盖索引走默认 ---
+(assert (! (= (select arr 0) 0) :named a_arr0))
+< success
+(assert (! (= (select arr 7) 0) :named a_arr7_default))
+< success
+; --- 嵌套 push/pop + 同名 shadow + 临时 assumption（第 2、3、4 次检查）---
+(push 1)
+< success
+(assert (! (= x 2) :named a_gate))
+< success
+(check-sat-assuming (a_gate))
+$ sat
+(get-model)
+@ (
+  (define-fun x () Int 2)
+  (define-fun y () Int 0)
+  (define-fun arr () (Array Int Int)
+    ((as const (Array Int Int)) 0))
+)
+(push 1)
+< success
+(assert (! (= x 5) :named a_gate))
+< success
+(check-sat-assuming (a_gate))
+$ unsat
+(pop 1)
+< success
+; pop 后 a_gate 恢复为外层的 (= x 2)；模型故意只给 x（partial model）
+(check-sat-assuming (a_gate))
+$ sat
+(get-model)
+@ (
+  (define-fun x () Int 2)
+)
+(pop 1)
+< success
+; --- 非最小 core：c_lo/c_hi 真正冲突，floor/ceil 是无关成员 ---
+(push 1)
+< success
+(assert (! (>= x 2) :named c_lo))
+< success
+(assert (! (<= x 1) :named c_hi))
+< success
+(check-sat)
+$ unsat
+(get-unsat-core)
+& (c_lo c_hi a_x_floor a_y_ceil)
+(pop 1)
+< success
+; 作用域恢复：c_lo 已随 pop 消失，该标签不再解析（诊断问题）
+(check-sat-assuming (c_lo))
+$ unknown
+; --- 不支持理论：String 项与全称量词，本地子集显式标 UNKNOWN ---
+(assert (= s s))
+< success
+(assert (forall ((z Int)) (>= z z)))
+< success
+(check-sat)
+$ unknown

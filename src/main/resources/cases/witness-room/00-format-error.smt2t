@@ -1,0 +1,10 @@
+; 明确的格式错误样例：check-sat 的响应类型与命令不匹配。
+; 导入层必须拒绝并报告行号，而不是静默接受。
+(set-logic QF_LIA)
+< success
+(declare-const x Int)
+< success
+(assert (= x 1))
+< success
+(check-sat)
+& (a_missing)

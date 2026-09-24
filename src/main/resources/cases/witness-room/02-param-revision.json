@@ -1,0 +1,24 @@
+{
+  "id": "step-param-revision",
+  "kind": "parameter-revision",
+  "parentStep": "01-baseline",
+  "algorithmVersion": "local-subset-1.0.0",
+  "before": {
+    "intBound": 3,
+    "realGrid": 2,
+    "maxCandidates": 5,
+    "fingerprint": "ib=3;rg=2;mc=5"
+  },
+  "after": {
+    "intBound": 6,
+    "realGrid": 4,
+    "maxCandidates": 8,
+    "fingerprint": "ib=6;rg=4;mc=8"
+  },
+  "rationale": "基线中数组默认值断言 (select arr 7)=0 触发了数组自由变量 UNKNOWN；扩大 Int 边界不改变该判定，但会重新枚举所有 Int 模型候选。参数修订产生新版本派生结果，旧版本结果仍保留、仅标记为过期。",
+  "expectedLocalEffects": [
+    "model:check#1 的候选枚举域随 intBound 扩大",
+    "core:c_lo/c_hi 结论不变（与数组无关，仍为非最小 core）",
+    "unsupported-theory(String/forall) 判定不变"
+  ]
+}

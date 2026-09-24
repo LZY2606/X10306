@@ -1,0 +1,6 @@
+; 明确的格式错误样例：get-model 缺少响应，且括号未闭合。
+(set-logic QF_LIA)
+< success
+(declare-const x Int
+< success
+(get-model)

@@ -1,0 +1,20 @@
+{
+  "id": "solver-witness-room-casepack",
+  "title": "求解器证言室：SMT 模型、unsat core 与假设作用域核验",
+  "description": "离线案例包：基线保留原命令流/层级/命名/check-sat-assuming/模型/响应顺序/逻辑声明；随后一次参数修订、一次只影响局部依赖的源改动、一次互相冲突的人工决定。",
+  "steps": [
+    { "file": "01-baseline.smt2t", "kind": "initial", "label": "基线：导入并复核" },
+    { "file": "02-param-revision.json", "kind": "parameter-revision", "label": "参数修订：扩大有界域" },
+    { "file": "03-source-change.smt2t", "kind": "source-change", "label": "局部源改动：c_hi 上界 1 -> 4" },
+    { "file": "04-conflicting-decisions.json", "kind": "decision-conflict", "label": "互相冲突的人工决定" }
+  ],
+  "acceptanceSituations": [
+    "nested push/pop",
+    "same-name shadow (a_gate at depth 1 vs depth 2)",
+    "one-shot temporary assumption (check-sat-assuming)",
+    "partial model (final check gives only x)",
+    "array default value ((as const ...) 0 + select at index 7)",
+    "unsupported theory (String, forall)",
+    "non-minimal unsat core (c_lo c_hi a_x_floor a_y_ceil)"
+  ]
+}

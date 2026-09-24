@@ -1,0 +1,22 @@
+{
+  "id": "step-conflicting-decisions",
+  "kind": "human-decision-conflict",
+  "parentStep": "02-param-revision",
+  "target": "drv_core_c_lo_c_hi",
+  "decisions": [
+    {
+      "ordinal": 0,
+      "reviewer": "alpha",
+      "decision": "accept",
+      "note": "接受求解器给出的 core：复核确认该子集确实 unsat，且标签来源全部保持。"
+    },
+    {
+      "ordinal": 1,
+      "reviewer": "beta",
+      "decision": "reject",
+      "note": "人工否定：审阅 beta 坚持要求最小 core；系统已记录缩减尝试显示 a_x_floor、a_y_ceil 可删除，按 beta 的标准判为拒绝。"
+    }
+  ],
+  "resolutionRule": "系统不自动覆盖任何一方：两条决定都作为事件保留；后续 accept/reject 必须显式引用先前决定并写入冲突解决事件。复核结论始终可回到当时版本与参数。",
+  "canonicalPosition": "按本地规则，core 只要求不满足且保持来源，不假定最小：因此 alpha 的 accept 与算法判定一致；beta 的 reject 作为更强的人工标准被保留并标注为覆盖性决定。"
+}
